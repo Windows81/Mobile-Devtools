@@ -31,9 +31,8 @@ jobs:
      uses: softprops/action-gh-release@v1
      with:
       files: "mobile-devtools.crx"
-      name: $VERSION_EXTENSION
-      tag_name: $VERSION_EXTENSION
+      name: ${{ env.VERSION_EXTENSION }}
+      tag_name: ${{ env.VERSION_EXTENSION }}
       generate_release_notes: true
-      prerelease: true
      env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
