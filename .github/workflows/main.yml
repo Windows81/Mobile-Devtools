@@ -11,16 +11,19 @@ jobs:
   steps:
    - uses: actions/checkout@v4
 
+   - name: Place Eruda File
+     run: |
+      curl https://cdn.jsdelivr.net/npm/eruda --output "./src/eruda.min.js";
+
    - name: Fetch Eruda Release Version
      run: |
       echo -n "VERSION_ERUDA=" >> $GITHUB_ENV;
-      curl -sL "https://api.github.com/repos/liriliri/eruda/releases/latest" | jq -r ".tag_name" >> $GITHUB_ENV;
+      grep -o -m 1 -P "(?<=^\/\*! eruda )v[^ ]+" "./src/eruda.min.js" >> $GITHUB_ENV;
 
    - name: Build
      run: |
-      curl https://cdn.jsdelivr.net/npm/eruda --output ./src/eruda.min.js;
       npm install -g crx;
-      crx pack -p "key.pem" "./src" "./mobile-devtools.crx";
+      crx pack -p "key.pem" "./src" -o "./mobile-devtools.crx";
 
    - name: Release with Notes
      uses: softprops/action-gh-release@v1
