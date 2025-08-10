@@ -1,0 +1,36 @@
+name: Get latest release version
+on:
+ schedule:
+  - cron: "0 10 * * *"
+jobs:
+ check:
+  runs-on: ubuntu-latest
+  steps:
+   - uses: actions/checkout@v4
+
+   - name: Fetch Eruda Release Version
+     run: |
+      echo -n "VERSION_ERUDA=" >> $GITHUB_ENV;
+      curl -sL "https://api.github.com/repos/liriliri/eruda/releases/latest" | jq -r ".tag_name" >> $GITHUB_ENV;
+
+   - name: Fetch Extension Release Version
+     run: |
+      echo -n "VERSION_EXTENSION=" >> $GITHUB_ENV;
+      curl -sL "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" | jq -r ".tag_name" >> $GITHUB_ENV;
+
+   - name: Build
+     run: |
+      curl https://cdn.jsdelivr.net/npm/eruda --output ./src/eruda.min.js
+      npm install -g crx
+      crx pack -p "key.pem" "./src" "mobile-devtools.crx"
+
+   - name: Release with Notes
+     uses: softprops/action-gh-release@v1
+     with:
+      files: "mobile-devtools.crx"
+      name: $VERSION_EXTENSION
+      tag_name: $VERSION_EXTENSION
+      generate_release_notes: true
+      prerelease: true
+     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
