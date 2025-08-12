@@ -26,7 +26,7 @@ jobs:
       crx pack -p "key.pem" "./src" -o "./mobile-devtools.crx";
 
    - name: Release with Notes
-     uses: softprops/action-gh-release@v1
+     uses: softprops/action-gh-release@v2
      with:
       files: "./mobile-devtools.crx"
       name: ${{ env.VERSION_ERUDA }}
